@@ -23,12 +23,19 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 def get_user(users, username: str):
 
     for user in users:
         if user.username in username:
-            return UserInDB(id=user.id, username=user.username, hashed_password=user.password)
+            return UserInDB(id=user.id, username=user.username, hashed_password=user.hashed_password)
 
 
 def verify_password(plain_password, hashed_password):
