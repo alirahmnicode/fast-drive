@@ -18,3 +18,16 @@ class UserModel(BaseModel):
 
 class UserInDB(UserModel):
     hashed_password: str
+
+
+class FoolderBase(BaseModel):
+    name: str
+    
+
+class Foolder(FoolderBase):
+    id: int
+    owner_id: int
+
+    class Config:
+        orm_mode = True
+
