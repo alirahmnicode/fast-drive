@@ -4,16 +4,14 @@ from typing import List
 
 from fastapi import FastAPI, Depends, File, UploadFile
 from fastapi.responses import HTMLResponse
-from typing_extensions import Annotated
 
 from routers import users, foolders
 
 from sqlalchemy.orm import Session
-from sql.database import SessionLocal, engine
-from sql import models, schemas, crud
+from sql.database import engine
+from sql import models, crud
 
-from utility import get_current_user, get_db
-from pyd_models import UserModel
+from utility import get_db
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -23,7 +21,6 @@ app = FastAPI()
 
 app.include_router(users.router)
 app.include_router(foolders.router, prefix="/admin", tags=["foolders"])
-
 
 
 @app.post("/files/")
