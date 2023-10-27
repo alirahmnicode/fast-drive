@@ -6,7 +6,7 @@ from fastapi import FastAPI, Depends, File, UploadFile
 from fastapi.responses import HTMLResponse
 from typing_extensions import Annotated
 
-from routers import users
+from routers import users, foolders
 
 from sqlalchemy.orm import Session
 from sql.database import SessionLocal, engine
@@ -22,22 +22,8 @@ app = FastAPI()
 
 
 app.include_router(users.router)
+app.include_router(foolders.router, prefix="/admin", tags=["foolders"])
 
-
-@app.get("/foolders/")
-def get_foolders(
-    user: Annotated[UserModel, Depends(get_current_user)], db: Session = Depends(get_db)
-):
-    return crud.get_foolders(db=db, user_id=user.id)
-
-
-@app.post("/foolders/")
-def create_foolder(
-    foolder,
-    user: Annotated[UserModel, Depends(get_current_user)],
-    db: Session = Depends(get_db),
-):
-    return crud.create_foolder(db=db, foolder=foolder, user_id=user.id)
 
 
 @app.post("/files/")
