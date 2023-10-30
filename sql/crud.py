@@ -27,6 +27,7 @@ def create_user(db: Session, user: schemas.UserCreate):
 #     db.refresh(db_item)
 #     return db_item
 
+
 class SqlORM:
     def __init__(self, model) -> None:
         self.db = SessionLocal()
@@ -34,6 +35,11 @@ class SqlORM:
 
     def get_owner_objects(self, owner_id: int):
         return self.db.query(self.model).filter(self.model.owner_id == owner_id)
+
+    def get_owner_object_by_id(self, owner_id: int, id: int):
+        return self.db.query(self.model).filter(
+            self.model.owner_id == owner_id, self.model.id == id
+        ).first()
 
     def create_object(self, **kwargs):
         db_obj = self.model(**kwargs)
