@@ -37,9 +37,11 @@ class SqlORM:
         return self.db.query(self.model).filter(self.model.owner_id == owner_id)
 
     def get_owner_object_by_id(self, owner_id: int, id: int):
-        return self.db.query(self.model).filter(
-            self.model.owner_id == owner_id, self.model.id == id
-        ).first()
+        return (
+            self.db.query(self.model)
+            .filter(self.model.owner_id == owner_id, self.model.id == id)
+            .first()
+        )
 
     def create_object(self, **kwargs):
         db_obj = self.model(**kwargs)
@@ -47,3 +49,15 @@ class SqlORM:
         self.db.commit()
         self.db.refresh(db_obj)
         return db_obj
+
+    def delete_owner_object(self, obj_id, owner_id):
+        self.db.query(self.model).filter(
+            self.model.id == obj_id, self.model.owner_id == owner_id
+        ).delete()
+        self.db.commit()
+
+    def update_owner_object(self, obj_id, owner_id, **values):
+        self.db.query(self.model).filter(
+            self.model.id == obj_id, self.model.owner_id == owner_id
+        ).update(values)
+        self.db.commit()

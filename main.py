@@ -11,7 +11,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 app.include_router(users.router)
-app.include_router(foolders.router, tags=["foolders"])
+app.include_router(foolders.router, prefix="/foolders", tags=["foolders"])
 app.include_router(files.router, prefix="/files", tags=["files"])
 
 

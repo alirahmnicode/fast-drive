@@ -22,10 +22,13 @@ class UserInDB(UserModel):
 
 class FoolderBase(BaseModel):
     name: str
-    
 
-class Foolder(FoolderBase):
+
+class FoolderUpdate(FoolderBase):
     id: int
+
+
+class Foolder(FoolderUpdate):
     owner_id: int
 
     class Config:
