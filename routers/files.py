@@ -55,22 +55,24 @@ def create_file(
     upload_location = get_upload_location(username=user.username)
 
     for file in files:
-        os.makedirs(upload_location, exist_ok=True)
-        file_name = file.filename
-        file_path = os.path.join(upload_location, file_name)
+        file_mb_size = file.size / 1000000
+        if file_mb_size < 6:
+            os.makedirs(upload_location, exist_ok=True)
+            file_name = file.filename
+            file_path = os.path.join(upload_location, file_name)
 
-        with open(file_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
-            new_obj = {
-                "name": file_name,
-                "location": file_path,
-                "content_type": file.content_type,
-                "owner_id": user.id
-            }
+            with open(file_path, "wb") as f:
+                shutil.copyfileobj(file.file, f)
+                new_obj = {
+                    "name": file_name,
+                    "location": file_path,
+                    "content_type": file.content_type,
+                    "owner_id": user.id
+                }
 
-            if foolder_id:
-                new_obj.update({"foolder_id": foolder_id, "has_foolder": True})
+                if foolder_id:
+                    new_obj.update({"foolder_id": foolder_id, "has_foolder": True})
 
-            sql_orm.create_object(**new_obj)
+                sql_orm.create_object(**new_obj)
 
     return {"filenames": [file.filename for file in files]}

@@ -2,6 +2,7 @@ from datetime import timedelta
 from typing_extensions import Annotated
 
 from fastapi import APIRouter, HTTPException, Depends, HTTPException, status
+from fastapi.responses import Response
 from fastapi import Depends
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 
@@ -13,6 +14,7 @@ from utility import (
     create_access_token,
     get_password_hash,
     get_db,
+    validate_password,
     ACCESS_TOKEN_EXPIRE_MINUTES,
 )
 from pyd_models import Token
@@ -47,13 +49,22 @@ def register(
     db: Session = Depends(get_db),
 ):
     username = form_data.username
-    hashed_password = get_password_hash(form_data.password)
-    user_schema = schemas.UserCreate(username=username, hashed_password=hashed_password)
-    user = crud.create_user(db=db, user=user_schema)
+    password = form_data.password
+    # validate password
+    validated_password = validate_password(username, password)
 
-    if user:
-        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = create_access_token(
-            data={"sub": user.username}, expires_delta=access_token_expires
+    if validated_password:
+        hashed_password = get_password_hash(password)
+        user_schema = schemas.UserCreate(
+            username=username, hashed_password=hashed_password
         )
-        return {"access_token": access_token, "token_type": "bearer"}
+        user = crud.create_user(db=db, user=user_schema)
+
+        if user:
+            access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            access_token = create_access_token(
+                data={"sub": user.username}, expires_delta=access_token_expires
+            )
+            return {"access_token": access_token, "token_type": "bearer"}
+    else:
+        return Response(status_code=status.HTTP_400_BAD_REQUEST)

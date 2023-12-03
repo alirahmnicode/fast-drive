@@ -96,3 +96,14 @@ def authenticate_user(users_db: list, username: str, password: str):
         return False
 
     return user
+
+
+def validate_password(username, password) -> bool:
+    verified = True
+
+    if len(password) < 8 or username == password:
+        verified = False
+    
+    return verified
+    
+

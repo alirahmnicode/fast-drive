@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Union, Optional
+from typing import Union, Optional, List
 
 
 class Token(BaseModel):
@@ -45,3 +45,7 @@ class FileModel(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class FoolderFiles(Foolder):
+    files: List[FileModel]
